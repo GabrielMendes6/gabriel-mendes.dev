@@ -1,0 +1,75 @@
+.scroll-ruler {
+  position: fixed;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 220px;
+  z-index: 10;
+  display: none;
+  align-items: center;
+}
+
+.scroll-ruler-track {
+  position: relative;
+  width: 2px;
+  height: 100%;
+  background: var(--bp-grid-strong);
+}
+
+.scroll-ruler-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bp-accent);
+  transition: height 0.1s linear;
+}
+
+.scroll-ruler-tick {
+  position: absolute;
+  left: -3px;
+  width: 8px;
+  height: 1px;
+  background: var(--bp-paper-faint);
+}
+
+.scroll-ruler-value {
+  position: absolute;
+  right: 14px;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: var(--bp-accent);
+  transition: top 0.1s linear;
+  white-space: nowrap;
+}
+
+.scroll-ruler-track {
+  cursor: grab;
+  touch-action: none;
+}
+
+.scroll-ruler-track:active {
+  cursor: grabbing;
+}
+
+body.scroll-dragging,
+body.scroll-dragging * {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grabbing !important;
+}
+
+@media (min-width: 960px) {
+  .scroll-ruler {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-ruler-fill,
+  .scroll-ruler-value {
+    transition: none;
+  }
+}
+
+

@@ -1,0 +1,244 @@
+.section-head {
+  margin-bottom: 40px;
+}
+
+.stack {
+  padding-bottom: 24px;
+}
+
+/* ---------- About ---------- */
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 48px;
+}
+
+.about-lead {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--bp-paper);
+}
+
+.about-body p {
+  color: var(--bp-paper-dim);
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.about-body p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 720px) {
+  .about-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+
+/* ---------- Stack (legenda) ---------- */
+
+.stack-legend {
+  border-top: 1px solid var(--bp-grid-strong);
+}
+
+.stack-row {
+  display: grid;
+  grid-template-columns: 48px 160px 1fr;
+  gap: 24px;
+  align-items: start;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--bp-grid-strong);
+}
+
+.stack-code {
+  font-size: 12px;
+  color: var(--bp-accent);
+  padding-top: 3px;
+}
+
+.stack-title {
+  font-weight: 600;
+  font-size: 15px;
+  padding-top: 2px;
+}
+
+.stack-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.stack-chip {
+  font-size: 12px;
+  color: var(--bp-paper-dim);
+  padding: 4px 10px;
+  border: 1px solid var(--bp-grid-strong);
+}
+
+@media (max-width: 640px) {
+  .stack-row {
+    grid-template-columns: 32px 1fr;
+  }
+  .stack-title { grid-column: 2; }
+  .stack-items { grid-column: 1 / -1; margin-top: 4px; }
+}
+
+/* ---------- Experience (ficha técnica) ---------- */
+
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.exp-card {
+  border: 1px solid var(--bp-grid-strong);
+  padding: clamp(24px, 4vw, 40px);
+  position: relative;
+}
+
+.exp-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--bp-grid-strong);
+}
+
+.exp-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.exp-status {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--bp-accent);
+  border: 1px solid var(--bp-accent-dim);
+  padding: 4px 10px;
+}
+
+.exp-summary {
+  color: var(--bp-paper-dim);
+  font-size: 16px;
+  max-width: 620px;
+  margin-bottom: 32px;
+}
+
+.exp-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.exp-spec-row {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 20px;
+}
+
+.exp-spec-tag {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--bp-paper-faint);
+  padding-top: 2px;
+}
+
+.exp-spec-text {
+  color: var(--bp-paper-dim);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .exp-spec-row { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* ---------- Contact (carimbo de prancha) ---------- */
+
+.title-block {
+  border: 1.5px solid var(--bp-paper-faint);
+}
+
+.title-block-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--bp-grid-strong);
+}
+
+.title-block-row:last-child { border-bottom: none; }
+
+.tb-field {
+  padding: 18px 24px;
+  border-right: 1px solid var(--bp-grid-strong);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tb-field:last-child { border-right: none; }
+
+.tb-key {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--bp-paper-faint);
+}
+
+.tb-value {
+  font-size: 15px;
+  color: var(--bp-paper);
+}
+
+.tb-link {
+  transition: color 0.15s ease;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.tb-link:hover {
+  color: var(--bp-accent);
+}
+
+@media (max-width: 560px) {
+  .title-block-row { grid-template-columns: 1fr; }
+  .tb-field { border-right: none; border-bottom: 1px solid var(--bp-grid-strong); }
+  .title-block-row .tb-field:last-child { border-bottom: none; }
+}
+
+/* ---------- Scrollbar (Blueprint) ---------- */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bp-accent) var(--bp-bg);
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bp-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bp-line);
+  border-radius: 0;
+  border: 2px solid var(--bp-bg-deep);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bp-accent);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--bp-bg-deep);
+}
