@@ -229,7 +229,7 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
               key={`${currentRole}-${reloadKey}-${iframeSrc}`}
               ref={iframeRef}
               src={iframeSrc}
-              title={`Demonstração ao vivo do projeto ${project?.name || 'Support Suite'}`}
+              title={`Demonstração ao vivo do projeto ${project?.name || 'HELPDESK AETHER'}`}
               className="demo-modal-iframe"
               allow="clipboard-read; clipboard-write; fullscreen"
               onLoad={() => setLoading(false)}

@@ -5,11 +5,11 @@ import LiveDemoModal from './LiveDemoModal.jsx'
 const PROJECTS = [
   {
     id: 'support-suite',
-    name: 'SUPPORT SUITE',
-    status: 'ONLINE / TEST DRIVE DISPONÍVEL',
+    name: 'HELPDESK AETHER',
+    status: 'ONLINE / TESTE DISPONÍVEL',
     hasDemo: true,
     summary:
-      'Sistema corporativo completo de Gestão de Chamados, Service Desk e Atendimento Multissetorial — backend de alta performance em .NET 10 (C#) e frontend SPA reativo em React.',
+      'Sistema corporativo completo de Gestão de Chamados, Service Desk e Atendimento Multissetorial — backend de alta performance em ASP.NET CORE e frontend SPA reativo em React.',
     specs: [
       {
         tag: 'ARQUITETURA',
@@ -124,7 +124,7 @@ export default function Experience() {
                     title="Abrir menu de demonstração e test drive interativo"
                   >
                     <span className="exp-demo-pulse" />
-                    <span>⚡ TEST DRIVE AO VIVO</span>
+                    <span>⚡ TESTAR ESSE PROJETO AGORA</span>
                   </button>
                 )}
               </div>
