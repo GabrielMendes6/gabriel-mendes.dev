@@ -68,3 +68,7 @@ src/
 Hospedado na **Vercel**, com domínio próprio (`gabriel.aethercorp.com.br`) apontado via CNAME no DNS. SSL emitido automaticamente pela Vercel — sem nginx nem certbot envolvidos aqui (diferente do Aether AI, que roda em EC2).
 
 Framework preset: **Vite**. Build command: `npm run build`. Output directory: `dist`.
+ 
+## Licença
+ 
+Todos os direitos reservados. Consulte [LICENSE](./LICENSE) — nenhuma parte deste código pode ser reutilizada, copiada ou redistribuída sem autorização prévia.

@@ -1,10 +1,43 @@
+import { useState } from 'react'
 import Reveal from './Reveal.jsx'
+import LiveDemoModal from './LiveDemoModal.jsx'
 
 const PROJECTS = [
+  {
+    id: 'support-suite',
+    name: 'SUPPORT SUITE',
+    status: 'ONLINE / TEST DRIVE DISPONÍVEL',
+    hasDemo: true,
+    summary:
+      'Sistema corporativo completo de Gestão de Chamados, Service Desk e Atendimento Multissetorial — backend de alta performance em .NET 10 (C#) e frontend SPA reativo em React.',
+    specs: [
+      {
+        tag: 'ARQUITETURA',
+        text: 'Clean Architecture e DDD em .NET 10, com CQRS/UseCases desacoplados, Entity Framework Core com PostgreSQL e migrations automatizadas.',
+      },
+      {
+        tag: 'SEGURANÇA',
+        text: 'Autenticação JWT com Refresh Tokens rotativos, RBAC granular com 32 permissões, rate limiting nomeado por endpoint e sanitização rigorosa contra XSS/IDOR.',
+      },
+      {
+        tag: 'REALTIME',
+        text: 'Notificações e sincronização de tickets, mensagens na timeline e alertas urgentes em tempo real via WebSockets / SignalR com fallback resiliente.',
+      },
+      {
+        tag: 'WORKFLOW',
+        text: 'Kanban interativo, gestão de SLAs dinâmicos com contagem regressiva, trâmites de atendimento, automações por eventos e base de conhecimento.',
+      },
+      {
+        tag: 'SANDBOX',
+        text: 'Modo de demonstração interativo com isolamento de banco de dados (zero persistência no banco de produção) e alternância instantânea entre 3 perfis de acesso.',
+      },
+    ],
+  },
   {
     id: 'aether-page-builder',
     name: 'AETHER PAGE BUILDER',
     status: 'EM DESENVOLVIMENTO',
+    hasDemo: false,
     summary:
       'Editor de páginas drag-and-drop construído do zero, com posicionamento por grid — Laravel, React e Inertia.js.',
     specs: [
@@ -34,12 +67,13 @@ const PROJECTS = [
     id: 'aether-ai',
     name: 'AETHER AI',
     status: 'EM DESENVOLVIMENTO',
+    hasDemo: false,
     summary:
       'Plataforma de assistente de IA pessoal, arquitetada e desenvolvida do zero — backend em Laravel, frontend em React.',
     specs: [
       {
-          tag: 'AUTH',
-          text: 'Autenticação via Laravel Sanctum (SPA), com sessão baseada em cookie httpOnly e proteção CSRF, usando um guard de autenticação dedicado.',
+        tag: 'AUTH',
+        text: 'Autenticação via Laravel Sanctum (SPA), com sessão baseada em cookie httpOnly e proteção CSRF, usando um guard de autenticação dedicado.',
       },
       {
         tag: 'SEGURANÇA',
@@ -62,6 +96,14 @@ const PROJECTS = [
 ]
 
 export default function Experience() {
+  const [activeDemo, setActiveDemo] = useState(null)
+  const [activeRole, setActiveRole] = useState('Admin')
+
+  function handleOpenDemo(project, role = 'Admin') {
+    setActiveRole(role)
+    setActiveDemo(project)
+  }
+
   return (
     <section className="section experience" id="projeto">
       <div className="section-head">
@@ -72,7 +114,20 @@ export default function Experience() {
         {PROJECTS.map((project) => (
           <Reveal as="div" className="exp-card" key={project.id}>
             <div className="exp-card-head">
-              <h3 className="exp-name mono">{project.name}</h3>
+              <div className="exp-card-title-group">
+                <h3 className="exp-name mono">{project.name}</h3>
+                {project.hasDemo && (
+                  <button
+                    type="button"
+                    className="exp-demo-btn mono"
+                    onClick={() => handleOpenDemo(project, 'Admin')}
+                    title="Abrir menu de demonstração e test drive interativo"
+                  >
+                    <span className="exp-demo-pulse" />
+                    <span>⚡ TEST DRIVE AO VIVO</span>
+                  </button>
+                )}
+              </div>
               <span className="exp-status mono">{project.status}</span>
             </div>
 
@@ -86,9 +141,44 @@ export default function Experience() {
                 </Reveal>
               ))}
             </div>
+
+            {project.hasDemo && (
+              <div className="exp-demo-cta-row">
+                <button
+                  type="button"
+                  className="exp-demo-main-btn mono"
+                  onClick={() => handleOpenDemo(project, 'Admin')}
+                >
+                  <span>👑 Testar como Administrador</span>
+                </button>
+                <button
+                  type="button"
+                  className="exp-demo-main-btn mono"
+                  onClick={() => handleOpenDemo(project, 'Agent')}
+                >
+                  <span>🎧 Testar como Atendente N2</span>
+                </button>
+                <button
+                  type="button"
+                  className="exp-demo-main-btn mono"
+                  onClick={() => handleOpenDemo(project, 'Customer')}
+                >
+                  <span>👤 Testar como Cliente</span>
+                </button>
+              </div>
+            )}
           </Reveal>
         ))}
       </div>
+
+      {/* Modal de Test Drive Interativo */}
+      {activeDemo && (
+        <LiveDemoModal
+          project={activeDemo}
+          initialRole={activeRole}
+          onClose={() => setActiveDemo(null)}
+        />
+      )}
     </section>
   )
 }
