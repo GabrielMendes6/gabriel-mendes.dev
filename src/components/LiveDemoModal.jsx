@@ -210,7 +210,10 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
               <div className="demo-modal-error-icon">⚠️</div>
               <h3 className="demo-modal-error-title mono">{authError}</h3>
               <p className="demo-modal-error-desc mono">
-                Parece que estamos com uma incosistencia no sistema de demonstração <code>Tente Novamente Mais Tarde!</code>
+                Parece que estamos com uma incosistencia no sistema de demonstração
+              </p>
+              <p className="demo-modal-error-desc mono">
+                <code>Tente Novamente Mais Tarde!</code>
               </p>
               <button
                 type="button"
