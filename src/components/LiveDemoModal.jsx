@@ -210,7 +210,7 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
               <div className="demo-modal-error-icon">⚠️</div>
               <h3 className="demo-modal-error-title mono">{authError}</h3>
               <p className="demo-modal-error-desc mono">
-                Certifique-se de que a API (Support.Api) está em execução em <code>{apiBaseUrl}</code>.
+                Parece que estamos com uma incosistencia no sistema de demonstração <code>Tente Novamente Mais Tarde!</code>
               </p>
               <button
                 type="button"
