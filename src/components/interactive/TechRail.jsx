@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
-import { TECHS } from '../data/techs.js'
-import TechModal from './TechModal.jsx'
+import { TECHS } from '../../data/techs.js'
+import TechModal from '../modals/TechModal.jsx'
 import './TechRail.css'
 
 // tempo (ms) pra esteira percorrer um conjunto completo de ícones, em piloto automático

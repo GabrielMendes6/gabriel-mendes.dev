@@ -1,4 +1,4 @@
-import useInView from '../hooks/useInView.js'
+import useInView from '../../hooks/useInView.js'
 import './Reveal.css'
 
 export default function Reveal({ children, as: Tag = 'div', className = '', delay = 0 }) {

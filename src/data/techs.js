@@ -5,35 +5,42 @@ import {
     SiJavascript,
     SiReact,
     SiVite,
+    SiDotnet,
     SiPhp,
     SiLaravel,
     SiMysql,
     SiRedis,
     SiDocker,
+    SiWireguard,
     SiUbuntu,
     SiLinux,
     SiNginx,
     SiGit,
     SiPostgresql,
     SiAxios,
+    SiVercel,
+    SiSwagger,
 } from 'react-icons/si'
 
-import { 
-    FaShieldHalved, 
+import {
+    FaShieldHalved,
     FaAws,
     FaNpm,
 } from 'react-icons/fa6';
 
-// TEXTOS DE REVISÃO: escrevi a partir do que sei do seu trabalho, mas
-// ajuste à vontade — principalmente os campos "projects" e "why" de cada
-// tecnologia, pra garantir que reflete exatamente como você usa cada uma.
+import {
+    GrOracle,
+} from 'react-icons/gr';
+
+// TEXTOS DE REVISÃO: descrevem as tecnologias, casos de uso reais
+// e o motivo arquitetural de escolha em cada projeto.
 export const TECHS = [
     {
         Icon: SiHtml5,
         name: 'HTML5',
         color: '#E34F26',
         description: 'Estrutura semântica de toda interface — a base sobre a qual tudo mais é construído.',
-        projects: ['Aether AI', 'Aether Page Builder', 'Este portfólio'],
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder', 'Este portfólio'],
         why: 'Semântica e acessibilidade certas desde o início evitam retrabalho depois — título certo, hierarquia certa, formulário certo.',
     },
     {
@@ -41,7 +48,7 @@ export const TECHS = [
         name: 'CSS',
         color: '#038ef0',
         description: 'Estilização pura, sem dependência de framework — variáveis CSS, grid, flexbox e animações nativas.',
-        projects: ["Aether AI (design - 'Aether HUD')", "Este portfólio (design - 'Blueprint')"],
+        projects: ["Helpdesk Aether (design - 'HUD Suite')", "Aether AI (design - 'Aether HUD')", "Este portfólio (design - 'Blueprint')"],
         why: 'Prefiro controlar cores, espaçamentos e animações diretamente com CSS, mantendo uma identidade visual consistente sem depender de um framework.',
     },
     {
@@ -57,24 +64,32 @@ export const TECHS = [
         name: 'JavaScript',
         color: '#F7DF1E',
         description: 'A linguagem por trás de toda lógica de frontend — e de boa parte da lógica assíncrona também.',
-        projects: ['Aether AI', 'Aether Page Builder', 'Este portfólio'],
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder', 'Este portfólio'],
         why: 'Base de tudo que faço em React. Entender bem o motor por trás evita depender cegamente de abstrações.',
     },
     {
         Icon: SiReact,
         name: 'React',
         color: '#61DAFB',
-        description: 'Biblioteca de componentes que uso pra construir toda interface reativa.',
-        projects: ['Aether AI', 'Aether Page Builder', 'Este portfólio'],
-        why: 'Componentização e um modelo de estado previsível tornam interfaces complexas — como um editor visual ou um chat com streaming — muito mais fáceis de manter.',
+        description: 'Biblioteca de componentes reativos para construção de interfaces complexas e SPAs.',
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder', 'Este portfólio'],
+        why: 'Componentização e um modelo de estado previsível tornam interfaces complexas — como central de chamados, kanbans interativos ou chats com streaming — muito mais fáceis de manter.',
     },
     {
         Icon: SiVite,
         name: 'Vite',
         color: '#FFD62E',
         description: 'Bundler e dev server rápido pra rodar e buildar projetos React.',
-        projects: ['Aether AI (frontend)', 'Aether Page Builder (frontend)', 'Este portfólio'],
+        projects: ['Helpdesk Aether (frontend)', 'Aether AI (frontend)', 'Aether Page Builder (frontend)', 'Este portfólio'],
         why: 'Hot reload quase instantâneo e build de produção enxuto, sem a complexidade de configurar um bundler do zero.',
+    },
+    {
+        Icon: SiDotnet,
+        name: '.NET 10 / C#',
+        color: '#512BD4',
+        description: 'Plataforma backend corporativa e ecossistema de altíssima performance para APIs RESTful e microsserviços.',
+        projects: ['Helpdesk Aether (API Backend)'],
+        why: 'Tipagem estática rigorosa, compilação de alta performance, injeção de dependência nativa e ecossistema robusto para Clean Architecture, DDD e CQRS.',
     },
     {
         Icon: SiPhp,
@@ -93,10 +108,18 @@ export const TECHS = [
         why: 'Resolve de fábrica os 80% comuns de qualquer backend (auth, validação, migrations), sobrando tempo pro que é específico do produto.',
     },
     {
+        Icon: SiPostgresql,
+        name: 'PostgreSQL',
+        color: '#4169E1',
+        description: 'Banco de dados relacional avançado com suporte a JSONB, índices parciais e alta concorrência.',
+        projects: ['Helpdesk Aether', 'Aether AI'],
+        why: 'Confiabilidade transacional estrita (ACID), recursos avançados como JSONB para payloads flexíveis e suporte excelente no Entity Framework Core.',
+    },
+    {
         Icon: SiMysql,
         name: 'MySQL',
         color: '#4479A1',
-        description: 'Banco relacional principal dos meus projetos.',
+        description: 'Banco relacional principal dos meus projetos em Laravel.',
         projects: ['Aether Page Builder'],
         why: 'Relações bem definidas entre componentes, sessões e personalização pedem um banco relacional maduro, com transações confiáveis.',
     },
@@ -104,57 +127,73 @@ export const TECHS = [
         Icon: SiRedis,
         name: 'Redis',
         color: '#FF4438',
-        description: 'Armazenamento em memória — cache, filas e sessões.',
-        projects: ['Aether AI', 'Aether Page Builder'],
-        why: 'Tira carga do banco em operações repetitivas e processa tarefas assíncronas — como transcrição de áudio — sem travar a resposta ao usuário.',
+        description: 'Armazenamento em memória para cache distribuído, filas e backplane de SignalR/WebSockets.',
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder'],
+        why: 'Tira carga do banco em operações repetitivas, gerencia cache distribuído e atua como backplane de mensageria em tempo real sem travar a API.',
     },
     {
         Icon: SiDocker,
         name: 'Docker',
         color: '#2496ED',
-        description: 'Containers pra empacotar e rodar aplicações de forma consistente.',
-        projects: ['Ambiente de desenvolvimento e deploy'],
-        why: "Elimina o clássico 'na minha máquina funciona' — o ambiente de produção fica idêntico ao local.",
+        description: 'Containers para empacotar e orquestrar aplicações com consistência entre dev e produção.',
+        projects: ['Helpdesk Aether (API, Redis, Postgres, Wireguard)', 'Ambientes de Dev e Deploy'],
+        why: "Elimina o clássico 'na minha máquina funciona' — o ambiente de produção na VPS roda idêntico ao local com Docker Compose.",
+    },
+    {
+        Icon: GrOracle,
+        name: 'Oracle Cloud (OCI)',
+        color: '#F80000',
+        description: 'Infraestrutura em nuvem corporativa para hospedagem de servidores VPS e bancos de dados em produção.',
+        projects: ['Helpdesk Aether (Oracle VM Always Free)'],
+        why: 'Instâncias Always Free com alta estabilidade, VCN privada, controle rigoroso de Security Lists e isolamento de rede.',
+    },
+    {
+        Icon: SiWireguard,
+        name: 'WireGuard',
+        color: '#88171A',
+        description: 'Protocolo de túnel VPN criptografado de última geração para redes e conexões privadas.',
+        projects: ['Helpdesk Aether (VPN Privada para SSH e Postgres)'],
+        why: 'Isola portas críticas (SSH 22, PostgreSQL 5432) do acesso público da internet, permitindo conexões de administração apenas por túnel criptografado.',
+    },
+    {
+        Icon: SiNginx,
+        name: 'Nginx',
+        color: '#009639',
+        description: 'Servidor web de alta performance e proxy reverso com terminação SSL/TLS.',
+        projects: ['Helpdesk Aether (SSL Reverse Proxy)', 'Aether AI (deploy em EC2)'],
+        why: 'Proxy reverso com certificados Let\'s Encrypt automatizados, roteamento de WebSockets/SignalR e headers de segurança HTTP antes da aplicação.',
+    },
+    {
+        Icon: SiVercel,
+        name: 'Vercel',
+        color: '#ffffff',
+        description: 'Plataforma de deploy global e CDN de borda para aplicações frontend modernas.',
+        projects: ['Helpdesk Aether (Frontend SPA)', 'Este portfólio'],
+        why: 'Deploy contínuo integrado ao GitHub, distribuição global via Edge Network e alta disponibilidade para aplicações React.',
     },
     {
         Icon: SiUbuntu,
         name: 'Ubuntu',
         color: '#E95420',
         description: 'Distribuição Linux que uso como base dos servidores.',
-        projects: ['Aether AI (deploy em AWS EC2)'],
-        why: 'Estável, com suporte de longo prazo (LTS) e documentação enorme pra qualquer problema de infraestrutura.',
+        projects: ['Helpdesk Aether (Oracle VM)', 'Aether AI (AWS EC2)'],
+        why: 'Estável, com suporte de longo prazo (LTS) e ecossistema maduro para contêineres Docker e ferramentas de infraestrutura.',
     },
     {
         Icon: SiLinux,
         name: 'Linux',
         color: '#FCC624',
         description: 'Sistema operacional utilizado no desenvolvimento e na administração de servidores.',
-        projects: ['Aether AI', 'Aether Page Builder'],
-        why: 'Controle total sobre o ambiente — de permissão de arquivo a configuração de rede — sem camada extra entre mim e o servidor.',
-    },
-    {
-        Icon: SiNginx,
-        name: 'Nginx',
-        color: '#009639',
-        description: 'Servidor web e proxy reverso.',
-        projects: ['Aether AI (deploy em EC2)'],
-        why: 'Proxy reverso pro backend Laravel, com headers de segurança configurados na camada de servidor, antes mesmo da aplicação.',
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder'],
+        why: 'Controle total sobre o ambiente — de permissões de arquivos a configurações de rede e firewalls — sem intermediários.',
     },
     {
         Icon: SiGit,
         name: 'Git',
         color: '#F05032',
-        description: 'Controle de versão pra todo código que escrevo.',
+        description: 'Controle de versão para todo código que escrevo.',
         projects: ['Todos os projetos'],
         why: 'Histórico claro de decisões e a segurança de poder reverter qualquer mudança sem medo de quebrar produção.',
-    },
-    {
-        Icon: SiPostgresql,
-        name: 'PostgreSQL',
-        color: '#4169E1',
-        description: 'Banco relacional alternativo ao MySQL, com recursos avançados (JSONB, full-text search).',
-        projects: ['Aether AI'],
-        why: 'Utilizo quando preciso de recursos avançados, como JSONB, consultas complexas e maior flexibilidade para modelagem de dados.'
     },
     {
         Icon: FaShieldHalved,
@@ -162,32 +201,38 @@ export const TECHS = [
         color: '#F59E0B',
         description: 'Autenticação SPA baseada em sessão com cookie httpOnly, protegida por CSRF token.',
         projects: ['Aether AI'],
-        why: 'Mantém a sessão segura e stateful entre frontend e backend, com cookies httpOnly (inacessíveis via JavaScript) e proteção CSRF nativa do Laravel.'
+        why: 'Mantém a sessão segura e stateful entre frontend e backend, com cookies httpOnly (inacessíveis via JavaScript) e proteção CSRF nativa.',
     },
     {
         Icon: SiAxios,
         name: 'Axios',
         color: '#5A29E4',
         description: 'Cliente HTTP utilizado para comunicação entre aplicações React e APIs REST.',
-        projects: ['Aether AI', 'Aether Page Builder', 'Este portfólio'],
-        why: 'Centraliza a comunicação com a API em um único ponto, tornando o código mais organizado, reutilizável e simples de manter conforme a aplicação cresce.'
+        projects: ['Helpdesk Aether', 'Aether AI', 'Aether Page Builder', 'Este portfólio'],
+        why: 'Centraliza interceptors de autenticação, tratamento global de erros e comunicação consistente com APIs REST.',
+    },
+    {
+        Icon: SiSwagger,
+        name: 'Swagger / OpenAPI',
+        color: '#85EA2D',
+        description: 'Documentação interativa e testes de contratos de APIs RESTful.',
+        projects: ['Helpdesk Aether (API)', 'Aether AI (API)'],
+        why: 'Padroniza especificações OpenAPI e permite testar rotas, autenticação JWT e schemas de payload diretamente no navegador.',
     },
     {
         Icon: FaAws,
         name: 'AWS',
         color: '#FF9900',
         description: 'Plataforma de computação em nuvem utilizada para hospedar aplicações e serviços.',
-        projects: ['Aether AI'],
-        why: 'Oferece infraestrutura escalável e confiável, permitindo que a aplicação evolua sem depender de um ambiente físico ou de configurações limitadas.'
+        projects: ['Aether AI (EC2)'],
+        why: 'Oferece infraestrutura escalável e confiável, permitindo que a aplicação evolua sem depender de um ambiente físico.',
     },
     {
-        Icon: FaNpm,    
+        Icon: FaNpm,
         name: 'npm',
         color: '#ff0000',
         description: 'Gerenciador de pacotes utilizado em projetos JavaScript.',
         projects: ['Todos os projetos frontend'],
-        why: 'Automatiza a instalação de dependências e a execução das ferramentas utilizadas durante o desenvolvimento.'
+        why: 'Automatiza a instalação de dependências e a execução dos scripts de build e desenvolvimento.',
     }
-    
-
 ]

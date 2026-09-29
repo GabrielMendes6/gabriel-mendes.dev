@@ -16,6 +16,9 @@ const CATEGORIES = [
     code: 'BE',
     title: 'Backend',
     items: [
+      'C# / .NET 10',
+      'ASP.NET Core',
+      'SignalR',
       'PHP',
       'Laravel',
       'Python',
@@ -26,23 +29,25 @@ const CATEGORIES = [
     code: 'DB',
     title: 'Dados',
     items: [
-      'SQL',
-      'MySQL',
       'PostgreSQL',
-      'Oracle',
+      'Entity Framework Core',
       'Redis',
+      'MySQL',
+      'SQL',
     ]
   },
   {
     code: 'IS',
     title: 'Infra & Segurança',
     items: [
+      'Oracle Cloud (OCI)',
+      'WireGuard VPN',
+      'Vercel',
+      'Docker / Compose',
+      'Nginx SSL',
       'AWS EC2',
-      'Ubuntu',
-      'Linux',
-      'Docker',
-      'Nginx',
-      'JWT',
+      'Ubuntu / Linux',
+      'JWT / RBAC',
       'Rate Limiting',
     ]
   },
@@ -50,6 +55,8 @@ const CATEGORIES = [
     code: 'TL',
     title: 'Ferramentas',
     items: [
+      'Swagger / OpenAPI',
+      'GitHub Actions',
       'Git',
       'GitHub',
       'Postman',
@@ -61,16 +68,18 @@ const CATEGORIES = [
     code: 'AR',
     title: 'Arquitetura',
     items: [
+      'Clean Architecture',
+      'DDD',
+      'CQRS / Use Cases',
       'API REST',
-      'MVC',
       'SPA',
-      'Responsive Design',
+      'Sandbox Zero DB',
       'Clean Code',
     ],
   }
 ]
 
-import Reveal from './Reveal.jsx'
+import Reveal from '../utilities/Reveal.jsx'
 
 export default function Stack() {
   return (

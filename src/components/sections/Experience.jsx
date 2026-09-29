@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import Reveal from './Reveal.jsx'
-import LiveDemoModal from './LiveDemoModal.jsx'
+import Reveal from '../utilities/Reveal.jsx'
+import LiveDemoModal from '../modals/LiveDemoModal.jsx'
 
 const PROJECTS = [
   {

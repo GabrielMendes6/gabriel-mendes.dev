@@ -115,7 +115,7 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
             <span className="demo-modal-dot" aria-hidden="true" />
             <div className="demo-modal-title-wrap">
               <span id="demo-modal-title" className="demo-modal-title mono">
-                {project?.name || 'SUPPORT SUITE'}
+                {project?.name || 'HELPDESK AETHER'}
               </span>
               <span className="demo-modal-subtag mono">TESTE AO VIVO // SANDBOX</span>
             </div>
