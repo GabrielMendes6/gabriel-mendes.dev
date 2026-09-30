@@ -153,7 +153,7 @@ export const TECHS = [
         color: '#88171A',
         description: 'Protocolo de túnel VPN criptografado de última geração para redes e conexões privadas.',
         projects: ['Helpdesk Aether (VPN Privada para SSH e Postgres)'],
-        why: 'Isola portas críticas (SSH 22, PostgreSQL 5432) do acesso público da internet, permitindo conexões de administração apenas por túnel criptografado.',
+        why: 'Isola portas críticas do acesso público da internet, permitindo conexões de administração apenas por túnel criptografado.',
     },
     {
         Icon: SiNginx,

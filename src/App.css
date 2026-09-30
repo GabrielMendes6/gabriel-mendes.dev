@@ -320,3 +320,9 @@
 ::-webkit-scrollbar-corner {
   background: var(--bp-bg-deep);
 }
+
+/* COPY */
+
+.tx-copy {
+  font-size: 14px;
+}

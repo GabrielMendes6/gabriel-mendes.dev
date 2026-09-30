@@ -1,7 +1,7 @@
 export default function Copy() {
     return (
         <div className="copy-block-row">
-          <p className="tb-link pointer tb-link center">
+          <p className="tb-link pointer tb-link center tx-copy">
             &copy; 2026 Desenvolvido por Gabriel Mendes.
           </p>
         </div>
