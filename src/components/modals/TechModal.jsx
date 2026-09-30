@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import './TechModal.css'
 
 export default function TechModal({ tech, onClose }) {
@@ -14,7 +15,10 @@ export default function TechModal({ tech, onClose }) {
 
   const { Icon, name, color, description, projects, why } = tech
 
-  return (
+  // Portal garante que o modal renderiza diretamente no <body>,
+  // completamente fora de qualquer stacking context intermediário.
+  // Isso resolve o z-index sem precisar de valores absurdos.
+  return createPortal(
     <div className="tech-modal-backdrop" onClick={onClose}>
       <div
         className="tech-modal"
@@ -51,6 +55,7 @@ export default function TechModal({ tech, onClose }) {
           <p className="tech-modal-why">{why}</p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

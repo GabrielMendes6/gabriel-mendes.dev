@@ -1,16 +1,63 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import './LiveDemoModal.css'
 
-export default function LiveDemoModal({ project, initialRole = 'Admin', onClose }) {
+// Cache de tokens por perfil — persiste enquanto a aba estiver aberta.
+// Evita nova chamada à API a cada troca de perfil durante a mesma sessão.
+const tokenCache = {}
+
+// Timeout máximo de espera para a autenticação demo (ms)
+const AUTH_TIMEOUT_MS = 10_000
+
+async function fetchDemoToken(apiBaseUrl, role, signal) {
+  const cached = tokenCache[role]
+  if (cached && cached.expiresAt > Date.now()) return cached.token
+
+  const response = await fetch(`${apiBaseUrl}/auth/demo-login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+    signal,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Falha ao inicializar demo (HTTP ${response.status})`)
+  }
+
+  const data = await response.json()
+  const token = data.token || data.accessToken
+
+  if (token) {
+    // Cache do token por 50 minutos (tempo seguro antes de expirar)
+    tokenCache[role] = { token, expiresAt: Date.now() + 50 * 60 * 1000 }
+  }
+
+  return token
+}
+
+// Atraso antes de disparar a autenticação quando o usuário troca de perfil
+// Evita múltiplas requisições ao clicar rapidamente
+function useDebounced(value, delay) {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}
+
+const LiveDemoModal = memo(function LiveDemoModal({ project, initialRole = 'Admin', onClose }) {
   const [currentRole, setCurrentRole] = useState(initialRole)
   const [loading, setLoading] = useState(true)
   const [fullscreen, setFullscreen] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
   const [iframeSrc, setIframeSrc] = useState('')
   const [authError, setAuthError] = useState(null)
+  const [retryCount, setRetryCount] = useState(0)
   const iframeRef = useRef(null)
 
-  // URLs base da aplicação e da API
+  // Debounce de 300ms na troca de perfis — evita chamadas em rajada
+  const debouncedRole = useDebounced(currentRole, 300)
+
   const appBaseUrl = (
     project?.demoUrl ||
     import.meta.env.VITE_SUPPORT_DEMO_URL ||
@@ -23,81 +70,75 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
     'http://localhost:5227'
   ).replace(/\/+$/, '')
 
-  // Efetua autenticação demo via API e injeta token diretamente na URL do iframe
+  // Autentica e injeta o token na URL do iframe
   useEffect(() => {
-    let cancelled = false
+    const controller = new AbortController()
+    // Timeout que aborta a requisição se demorar mais que AUTH_TIMEOUT_MS
+    const timeoutId = setTimeout(() => controller.abort(), AUTH_TIMEOUT_MS)
+
     setLoading(true)
     setAuthError(null)
 
     async function bootstrapDemo() {
       try {
-        const response = await fetch(`${apiBaseUrl}/auth/demo-login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ role: currentRole }),
-        })
+        const token = await fetchDemoToken(apiBaseUrl, debouncedRole, controller.signal)
 
-        if (!response.ok) {
-          throw new Error(`Falha ao inicializar demo (HTTP ${response.status})`)
-        }
-
-        const data = await response.json()
-        const token = data.token || data.accessToken
-
-        if (!cancelled && token) {
+        if (token) {
           const targetUrl = `${appBaseUrl}/?auth_token=${encodeURIComponent(token)}`
           setIframeSrc(targetUrl)
         }
       } catch (err) {
-        console.error('[LiveDemoModal] Erro ao autenticar demo:', err)
-        if (!cancelled) {
+        if (err.name === 'AbortError') {
+          console.warn('[LiveDemoModal] Timeout ao conectar ao servidor de demo.')
+          setAuthError('O servidor demorou demais para responder.')
+        } else {
+          console.error('[LiveDemoModal] Erro ao autenticar demo:', err)
           setAuthError('Não foi possível conectar ao servidor de demonstração.')
-          setIframeSrc('')
-          setLoading(false)
         }
+        setIframeSrc('')
+        setLoading(false)
       }
     }
 
     bootstrapDemo()
 
     return () => {
-      cancelled = true
+      clearTimeout(timeoutId)
+      controller.abort()
     }
-  }, [currentRole, reloadKey, apiBaseUrl, appBaseUrl])
+  }, [debouncedRole, reloadKey, apiBaseUrl, appBaseUrl])
 
-  // Trata tecla ESC para fechar modal e F11/fullscreen
+  // ESC fecha o fullscreen ou o modal
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.key === 'Escape') {
-        if (fullscreen) {
-          setFullscreen(false)
-        } else {
-          onClose()
-        }
+        if (fullscreen) setFullscreen(false)
+        else onClose()
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose, fullscreen])
 
-  // Bloqueia rolagem do body enquanto modal estiver ativo
+  // Bloqueia rolagem do body enquanto modal estiver aberto
   useEffect(() => {
     document.documentElement.style.overflowY = 'hidden'
-    return () => {
-      document.documentElement.style.overflowY = ''
-    }
+    return () => { document.documentElement.style.overflowY = '' }
   }, [])
 
-  function handleRoleChange(newRole) {
+  const handleRoleChange = useCallback((newRole) => {
     if (newRole === currentRole) return
     setCurrentRole(newRole)
-  }
+  }, [currentRole])
 
-  function handleReload() {
+  const handleReload = useCallback(() => {
+    // Limpa o cache do perfil atual para forçar novo token
+    delete tokenCache[currentRole]
+    setRetryCount((prev) => prev + 1)
     setReloadKey((prev) => prev + 1)
-  }
+  }, [currentRole])
+
+  const handleIframeLoad = useCallback(() => setLoading(false), [])
 
   return (
     <div className="demo-modal-backdrop" onClick={onClose}>
@@ -125,41 +166,22 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
           <div className="demo-modal-personas">
             <span className="demo-modal-personas-label mono">PERFIL:</span>
 
-            <button
-              type="button"
-              className={`demo-modal-persona-btn mono ${
-                currentRole === 'Admin' ? 'demo-modal-persona-btn--active' : ''
-              }`}
-              onClick={() => handleRoleChange('Admin')}
-              title="Entrar como Administrador (Gestão de setores, usuários, relatórios e automações)"
-            >
-              <span>👑</span>
-              <span>Admin</span>
-            </button>
-
-            <button
-              type="button"
-              className={`demo-modal-persona-btn mono ${
-                currentRole === 'Agent' ? 'demo-modal-persona-btn--active' : ''
-              }`}
-              onClick={() => handleRoleChange('Agent')}
-              title="Entrar como Atendente N2 (Gestão operacional de tickets, kanban e respostas)"
-            >
-              <span>🎧</span>
-              <span>Atendente N2</span>
-            </button>
-
-            <button
-              type="button"
-              className={`demo-modal-persona-btn mono ${
-                currentRole === 'Customer' ? 'demo-modal-persona-btn--active' : ''
-              }`}
-              onClick={() => handleRoleChange('Customer')}
-              title="Entrar como Cliente (Abertura e acompanhamento de chamados)"
-            >
-              <span>👤</span>
-              <span>Cliente</span>
-            </button>
+            {[
+              { role: 'Admin', icon: '👑', label: 'Admin', title: 'Entrar como Administrador (Gestão de setores, usuários, relatórios e automações)' },
+              { role: 'Agent', icon: '🎧', label: 'Atendente N2', title: 'Entrar como Atendente N2 (Gestão operacional de tickets, kanban e respostas)' },
+              { role: 'Customer', icon: '👤', label: 'Cliente', title: 'Entrar como Cliente (Abertura e acompanhamento de chamados)' },
+            ].map(({ role, icon, label, title }) => (
+              <button
+                key={role}
+                type="button"
+                className={`demo-modal-persona-btn mono ${currentRole === role ? 'demo-modal-persona-btn--active' : ''}`}
+                onClick={() => handleRoleChange(role)}
+                title={title}
+              >
+                <span>{icon}</span>
+                <span>{label}</span>
+              </button>
+            ))}
           </div>
 
           {/* Direita: Controles de Janela */}
@@ -210,41 +232,45 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
               <div className="demo-modal-error-icon">⚠️</div>
               <h3 className="demo-modal-error-title mono">{authError}</h3>
               <p className="demo-modal-error-desc mono">
-                Parece que estamos com uma incosistencia no sistema de demonstração
+                Parece que estamos com uma inconsistência no sistema de demonstração.
               </p>
-              <p className="demo-modal-error-desc mono">
-                <code>Tente Novamente Mais Tarde!</code>
-              </p>
-              <button
-                type="button"
-                className="demo-modal-ctrl-btn mono"
-                style={{ marginTop: '12px', padding: '8px 16px', borderColor: 'var(--bp-accent)', color: 'var(--bp-paper)' }}
-                onClick={handleReload}
-              >
-                <span>🔄</span>
-                <span>Tentar Novamente</span>
-              </button>
+              {retryCount < 3 ? (
+                <button
+                  type="button"
+                  className="demo-modal-ctrl-btn mono"
+                  style={{ marginTop: '12px', padding: '8px 16px', borderColor: 'var(--bp-accent)', color: 'var(--bp-paper)' }}
+                  onClick={handleReload}
+                >
+                  <span>🔄</span>
+                  <span>Tentar Novamente ({3 - retryCount} restante{3 - retryCount !== 1 ? 's' : ''})</span>
+                </button>
+              ) : (
+                <p className="demo-modal-error-desc mono" style={{ marginTop: '12px' }}>
+                  <code>Tente novamente mais tarde!</code>
+                </p>
+              )}
             </div>
           )}
 
+          {/* O iframe só é montado quando temos uma URL válida.
+              loading="lazy" impede o browser de pré-carregar recursos fora da viewport. */}
           {iframeSrc && (
             <iframe
-              key={`${currentRole}-${reloadKey}-${iframeSrc}`}
+              key={`${debouncedRole}-${reloadKey}`}
               ref={iframeRef}
               src={iframeSrc}
               title={`Demonstração ao vivo do projeto ${project?.name || 'HELPDESK AETHER'}`}
               className="demo-modal-iframe"
+              loading="lazy"
               allow="clipboard-read; clipboard-write; fullscreen"
-              onLoad={() => setLoading(false)}
+              onLoad={handleIframeLoad}
             />
           )}
         </div>
 
         {/* Rodapé Informativo */}
         <footer className="demo-modal-footer">
-          <div className="demo-modal-footer-sec mono">
-            
-          </div>
+          <div className="demo-modal-footer-sec mono" />
           <div className="demo-modal-footer-hint mono">
             Alterne o perfil no topo para testar fluxos entre Cliente, Atendente e Admin.
           </div>
@@ -252,4 +278,6 @@ export default function LiveDemoModal({ project, initialRole = 'Admin', onClose 
       </div>
     </div>
   )
-}
+})
+
+export default LiveDemoModal

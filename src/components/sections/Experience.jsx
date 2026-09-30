@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import Reveal from '../utilities/Reveal.jsx'
-import LiveDemoModal from '../modals/LiveDemoModal.jsx'
+
+// Carregado sob demanda — o bundle do modal só é baixado quando o usuário
+// clica em "Testar", nunca durante o carregamento inicial da página.
+const LiveDemoModal = lazy(() => import('../modals/LiveDemoModal.jsx'))
 
 const PROJECTS = [
   {
@@ -171,13 +174,15 @@ export default function Experience() {
         ))}
       </div>
 
-      {/* Modal de Test Drive Interativo */}
+      {/* Modal de Test Drive Interativo — carregado por demanda via lazy() */}
       {activeDemo && (
-        <LiveDemoModal
-          project={activeDemo}
-          initialRole={activeRole}
-          onClose={() => setActiveDemo(null)}
-        />
+        <Suspense fallback={null}>
+          <LiveDemoModal
+            project={activeDemo}
+            initialRole={activeRole}
+            onClose={() => setActiveDemo(null)}
+          />
+        </Suspense>
       )}
     </section>
   )

@@ -1,6 +1,7 @@
 .section-flush {
-  position: relative;
-  z-index: 1;
+  /* isolation: isolate cria um stacking context próprio sem elevar o z-index
+     global — o TechRail não interfere mais na pilha de outras seções. */
+  isolation: isolate;
 }
 
 .tech-rail {

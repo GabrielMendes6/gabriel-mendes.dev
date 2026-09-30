@@ -114,10 +114,6 @@
   font-size: 14.5px;
   line-height: 1.6;
 }
-.z-999 {
-    z-index: 999;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .tech-modal-backdrop,
   .tech-modal {
