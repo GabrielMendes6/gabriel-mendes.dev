@@ -8,7 +8,7 @@ const CYCLE_MS = 40000
 // duração máxima (ms) de um toque pra ainda contar como "clique" e abrir o popup
 const CLICK_MS = 300
 // distância (px) a partir da qual um toque vira "arrastar"
-const DRAG_THRESHOLD = 4
+const DRAG_THRESHOLD = 6
 
 function Tile({ Icon, name, color, active }) {
   return (
@@ -25,9 +25,11 @@ export default function TechRail() {
   const draggingRef = useRef(false)
   const heldRef = useRef(false)
   const startXRef = useRef(0)
+  const startYRef = useRef(0)
   const startOffsetRef = useRef(0)
   const pressStartRef = useRef(0)
   const pressedTechRef = useRef(null)
+  const hasCapturedPointerRef = useRef(false)
   const [interacting, setInteracting] = useState(false)
   const [activeTech, setActiveTech] = useState(null)
   const [activeIndex, setActiveIndex] = useState(null);
@@ -66,56 +68,75 @@ export default function TechRail() {
     return () => cancelAnimationFrame(rafId)
   }, [activeTech]);
 
-  useEffect(() => {
-    document.documentElement.style.overflowY = activeTech ? 'hidden' : '';
-
-    return () => {
-      document.documentElement.style.overflowY = '';
-    };
-  }, [activeTech]);
-
   function handlePointerDown(e) {
+    if (e.button !== undefined && e.button !== 0) return
+
     heldRef.current = true
     draggingRef.current = false
     startXRef.current = e.clientX
+    startYRef.current = e.clientY
     startOffsetRef.current = offsetRef.current
     pressStartRef.current = Date.now()
+    hasCapturedPointerRef.current = false
 
     const tileEl = e.target.closest ? e.target.closest('.rail-tile') : null
     pressedTechRef.current = tileEl ? tileEl.dataset.techName : null
 
     setInteracting(true)
-    e.currentTarget.setPointerCapture(e.pointerId)
   }
 
   function handlePointerMove(e) {
     if (!heldRef.current) return
+
     const dx = e.clientX - startXRef.current
-    if (Math.abs(dx) > DRAG_THRESHOLD) {
+    const dy = e.clientY - startYRef.current
+    const absDx = Math.abs(dx)
+    const absDy = Math.abs(dy)
+
+    if (!draggingRef.current && (absDx > DRAG_THRESHOLD || absDy > DRAG_THRESHOLD)) {
       draggingRef.current = true
+
+      // Se arrastou predominantemente na horizontal, captura o ponteiro para movimentar a esteira
+      if (absDx >= absDy && !hasCapturedPointerRef.current) {
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId)
+          hasCapturedPointerRef.current = true
+        } catch {
+          /* pointer capture não suportado ou falhou */
+        }
+      }
     }
-    if (draggingRef.current) {
+
+    if (draggingRef.current && hasCapturedPointerRef.current) {
       offsetRef.current = startOffsetRef.current - dx
     }
   }
 
-  function endInteraction(e) {
-    const wasDragging = draggingRef.current
-    const duration = Date.now() - pressStartRef.current
+  function releasePointer(e) {
+    if (hasCapturedPointerRef.current) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      } catch {
+        /* pointer already released */
+      }
+      hasCapturedPointerRef.current = false
+    }
 
     heldRef.current = false
     draggingRef.current = false
     setInteracting(false)
+  }
 
-    try {
-      e.currentTarget.releasePointerCapture(e.pointerId)
-    } catch {
-      /* pointer already released */
-    }
+  function handlePointerUp(e) {
+    const wasDragging = draggingRef.current
+    const duration = Date.now() - pressStartRef.current
+    const targetTech = pressedTechRef.current
 
-    // clique de verdade: sem arrastar e rápido — abre o popup da tecnologia
-    if (!wasDragging && duration < CLICK_MS && pressedTechRef.current) {
-      const index = TECHS.findIndex((t) => t.name === pressedTechRef.current)
+    releasePointer(e)
+
+    // clique de verdade: sem arrastar (nem horizontal nem vertical) e rápido — abre o popup da tecnologia
+    if (!wasDragging && duration < CLICK_MS && targetTech) {
+      const index = TECHS.findIndex((t) => t.name === targetTech)
       const tech = TECHS[index]
 
       if (tech) {
@@ -123,6 +144,13 @@ export default function TechRail() {
         setActiveIndex(index)
       }
     }
+    pressedTechRef.current = null
+  }
+
+  function handlePointerCancel(e) {
+    // Quando o navegador assume o scroll vertical nativo (pan-y) no mobile:
+    // encerra a interação e NUNCA abre o modal
+    releasePointer(e)
     pressedTechRef.current = null
   }
 
@@ -149,8 +177,8 @@ export default function TechRail() {
           className={`rail-row ${interacting ? 'rail-row-active' : ''}`}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
-          onPointerUp={endInteraction}
-          onPointerCancel={endInteraction}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
           role="button"
           tabIndex={0}
           aria-pressed={interacting}

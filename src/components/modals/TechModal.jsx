@@ -4,12 +4,25 @@ import './TechModal.css'
 
 export default function TechModal({ tech, onClose }) {
   useEffect(() => {
+    if (!tech) return
+
+    const originalBodyOverflow = document.body.style.overflow
+    const originalHtmlOverflow = document.documentElement.style.overflow
+
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+
     function handleKey(e) {
       if (e.key === 'Escape') onClose()
     }
     document.addEventListener('keydown', handleKey)
-    return () => document.removeEventListener('keydown', handleKey)
-  }, [onClose])
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow
+      document.documentElement.style.overflow = originalHtmlOverflow
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [tech, onClose])
 
   if (!tech) return null
 

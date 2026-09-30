@@ -4,11 +4,14 @@
   z-index: 100;
   background: rgba(6, 16, 30, 0.72);
   backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   animation: modal-fade-in 0.2s ease;
+  overscroll-behavior: contain;
+  touch-action: none;
 }
 
 @keyframes modal-fade-in {
@@ -21,10 +24,14 @@
   width: 100%;
   max-width: 460px;
   max-height: 85vh;
+  max-height: 85dvh;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   background: var(--bp-bg);
   border: 1px solid var(--bp-paper-faint);
-  padding: clamp(24px, 4vw, 36px);
+  padding: clamp(20px, 4vw, 36px);
   animation: modal-pop-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -114,6 +121,27 @@
   font-size: 14.5px;
   line-height: 1.6;
 }
+
+@media (max-width: 640px) {
+  .tech-modal-backdrop {
+    padding: 16px;
+  }
+  .tech-modal {
+    max-height: 88dvh;
+    padding: 20px 18px;
+  }
+  .tech-modal-icon {
+    font-size: 38px;
+  }
+  .tech-modal-name {
+    font-size: 19px;
+  }
+  .tech-modal-desc {
+    font-size: 14px;
+    margin-bottom: 18px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tech-modal-backdrop,
   .tech-modal {

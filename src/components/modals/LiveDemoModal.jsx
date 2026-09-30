@@ -122,8 +122,16 @@ const LiveDemoModal = memo(function LiveDemoModal({ project, initialRole = 'Admi
 
   // Bloqueia rolagem do body enquanto modal estiver aberto
   useEffect(() => {
-    document.documentElement.style.overflowY = 'hidden'
-    return () => { document.documentElement.style.overflowY = '' }
+    const origBody = document.body.style.overflow
+    const origHtml = document.documentElement.style.overflow
+
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = origBody
+      document.documentElement.style.overflow = origHtml
+    }
   }, [])
 
   const handleRoleChange = useCallback((newRole) => {
